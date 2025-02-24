@@ -1,0 +1,6 @@
+Art/f.png*f0
+Art/ChelseySprite.png*ChelseySouthBase
+Art/pixil-frame-0.png*Ex1
+Art/pixil-frame-1.png*Ex0
+Art/pixil-frame-2.png*Ex2
+Art/pixil-frame-3.png*Ex3
