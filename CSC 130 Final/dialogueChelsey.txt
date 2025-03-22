@@ -1,0 +1,5 @@
+string1*Chelsey: 'Woah, this is very pretty. Let me record it'
+string2*Chelsey: 'Stop moving, this is a cool shot'
+string3*Chelsey: 'My lense is scratched, I think I need another one'
+string4*Chelsey: 'Augh, my arms are tired. This camera is very heavy'
+string5*Chelsey: 'LEBROOOOOOOON'
