@@ -15,3 +15,16 @@ Art/ChelseySpriteNorth3.png*ChelseyNorth3
 Art/ChelseySpriteWest1.png*ChelseyWest1
 Art/ChelseySpriteWest2.png*ChelseyWest2
 Art/ChelseySpriteWest3.png*ChelseyWest3
+Art/wallLeft.png*WallLeft
+Art/wallRight.png*WallRight
+Art/wallTop1.png*WallTop1
+Art/wallTop2.png*WallTop2
+Art/wallBottom1.png*WallBottom1
+Art/wallBottom2.png*WallBottom2
+Art/blackCrate1.png*Crate1
+Art/blackCrate2.png*Crate2
+Art/chair.png*Chair
+Art/cat.png*Cat
+Art/camera.png*Camera
+Art/tables.png*Tables
+Art/chair.png*Chair

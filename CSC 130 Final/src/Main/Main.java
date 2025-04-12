@@ -59,7 +59,7 @@ public class Main{
 	/* This is your access to the "game loop" (It is a "callback" method from the Control class (do NOT modify that class!))*/
 	public static void update(Control ctrl) {
 		// TODO: This is where you can code! (Starting code below is just to show you how it works)
-		ctrl.addSpriteToFrontBuffer(1060, 570, "ChelseySouth1");						 				// Add a tester sprite to render list by tag (Remove later! Test only!)		
+		ctrl.addSpriteToFrontBuffer(1060, 570, "Chair");						 				// Add a tester sprite to render list by tag (Remove later! Test only!)		
 
 		ctrl.drawString(1000, 710, "Zachary Juls Radaza", darkGreen);		// Test drawing text on screen where you want (Remove later! Test only!)
 		
