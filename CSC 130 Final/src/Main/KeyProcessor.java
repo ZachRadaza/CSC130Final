@@ -34,39 +34,33 @@ public class KeyProcessor{
 		case ' ':
 			Main.currentSpriteIndex = 0;
 			Main.currentlyMoving = false;
-			Main.trigger = "";
 			break;
 			
 		case 'w':
 			direction = 0;
 			Main.currentlyMoving = true;
-			Main.sprite.getCoords().adjustY(-5);
-			Main.trigger = "w has been triggered";
+			Main.spriteChelsey.getCoords().adjustY(-5);
 			break;
 			
 		case 'a':
 			direction = 3;
 			Main.currentlyMoving = true;
-			Main.sprite.getCoords().adjustX(-5);
-			Main.trigger = "a has been triggered";
+			Main.spriteChelsey.getCoords().adjustX(-5);
 			break;
 			
 		case 's':
 			direction = 1;
 			Main.currentlyMoving = true;
-			Main.sprite.getCoords().adjustY(5);
-			Main.trigger = "s has been triggered";
+			Main.spriteChelsey.getCoords().adjustY(5);
 			break;
 			
 		case 'd':
 			direction = 2;
 			Main.currentlyMoving = true;
-			Main.sprite.getCoords().adjustX(5);
-			Main.trigger = "d has been triggered";
+			Main.spriteChelsey.getCoords().adjustX(5);
 			break; 
 			
 		case '$':
-			Main.trigger = "spacebar has been triggered";
 			break;
 			
 		case 'm':

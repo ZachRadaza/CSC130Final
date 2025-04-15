@@ -27,4 +27,6 @@ Art/chair.png*Chair
 Art/cat.png*Cat
 Art/camera.png*Camera
 Art/tables.png*Tables
-Art/chair.png*Chair
+Art/floorLeft.png*FloorLeft
+Art/floorRight.png*FloorRight
+Art/greenScreen.png*GreenScreen
