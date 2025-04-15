@@ -34,14 +34,18 @@ public class Main{
 	public static spriteInfo spriteFloorR = new spriteInfo(new Vector2D(640, 0), "FloorRight");
 	
 	public static ArrayList<spriteInfo> spriteObjects = new ArrayList<>();
-	public static Vector2D[] spriteObjectsVectors = {new Vector2D(0, 0), new Vector2D(640, 0), new Vector2D(0, 0), new Vector2D(1240, 0), new Vector2D(0, 546), new Vector2D(640, 546), new Vector2D(850, 40), new Vector2D(900, 120), new Vector2D(50, 40), new Vector2D(700, 180), new Vector2D(150, 400), new Vector2D(500, 90), new Vector2D(610, 200)};
+	public static Vector2D[] spriteObjectsVectors = {new Vector2D(0, 0), new Vector2D(640, 0), new Vector2D(0, 0), new Vector2D(1240, 0), new Vector2D(0, 546), new Vector2D(640, 546), new Vector2D(850, 40), new Vector2D(960, 120), new Vector2D(50, 40), new Vector2D(700, 180), new Vector2D(150, 400), new Vector2D(500, 90), new Vector2D(610, 200)};
 	public static String[] spriteObjectsString = {"WallTop1", "WallTop2", "WallLeft", "WallRight", "WallBottom1", "WallBottom2", "GreenScreen", "Cat", "Tables", "Camera", "Crate1", "Crate2", "Chair"};
+	//height and widths of objects in order
+	public static int[][] widthHeight = {{640, 174}, {640, 174}, {40, 720}, {40, 720}, {640, 174}, {640, 174}, {384, 384}, {128, 128}, {300, 158}, {67, 106}, {122, 106}, {102, 107}, {65, 85}};
 	
 	//fields for dialogue
 	public static HashMap<String, String> dialogue = new HashMap<>();
 	public static String[] dialogueKey = new String[5];
 	public static int currentDialogueKey = 0;
 	
+	//fields for physics
+	public static boolean canMove = true; //if Chelsey can move in that direction or not
 	// End Static fields...
 	
 	public static void main(String[] args) {
@@ -78,6 +82,7 @@ public class Main{
 
 		timerChecks();
 		
+		setCanMove(spriteObjects);
 	}
 	
 	// Additional Static methods below...(if needed)
@@ -104,8 +109,45 @@ public class Main{
 		
 		//objects
 		for(int i = 0; i < spriteObjectsString.length; i++){
-			spriteObjects.add(new spriteInfo(spriteObjectsVectors[i], spriteObjectsString[i]));
+			if(spriteObjects.size() < 13){
+				spriteObjects.add(new spriteInfo(spriteObjectsVectors[i], spriteObjectsString[i]));
+			}
 			ctrl.addSpriteToFrontBuffer(spriteObjects.get(i).getCoords().getX(), spriteObjects.get(i).getCoords().getY(), spriteObjects.get(i).getTag());
 		}
 	}
+	
+	//checks if then can move through the object or not, if not, bounces them back depending on last input
+	private static void setCanMove(ArrayList<spriteInfo> object){
+		for(int i = 0; i < object.size(); i++){
+			if((spriteChelsey.getCoords().getX() + 30 < object.get(i).getCoords().getX() + widthHeight[i][0]) &&
+					   (spriteChelsey.getCoords().getX() - 30 + 128 > object.get(i).getCoords().getX()) &&
+					   (spriteChelsey.getCoords().getY() + 90 < object.get(i).getCoords().getY() + widthHeight[i][1]) &&
+					   (spriteChelsey.getCoords().getY() + 110 > object.get(i).getCoords().getY())) {
+						
+						canMove = false;
+						
+						if(KeyProcessor.getLastBeforeCollision() == 'w'){
+							spriteChelsey.getCoords().adjustY(2);
+						}
+						
+						if(KeyProcessor.getLastBeforeCollision() == 'a'){
+							spriteChelsey.getCoords().adjustX(2);
+						}
+						
+						if(KeyProcessor.getLastBeforeCollision() == 's'){
+							spriteChelsey.getCoords().adjustY(-2);
+						}
+						
+						if(KeyProcessor.getLastBeforeCollision() == 'd'){
+							spriteChelsey.getCoords().adjustX(-2);
+						}
+						break;
+						
+			} else {
+				canMove = true;
+			}
+		}
+	}
+	
+	
 }
