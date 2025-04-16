@@ -9,6 +9,7 @@ public class KeyProcessor{
 	// Static Fields
 	private static char last = ' ';			// For debouncing purposes
 	private static stopWatchX sw = new stopWatchX(5);
+	private static stopWatchX swSpaceBar = new stopWatchX(2000); //makes sure you can only press space bar space bar once every 2 seconds
 	
 	public static int direction = 1; //direction character is going
 	
@@ -42,7 +43,7 @@ public class KeyProcessor{
 			direction = 0;
 			Main.currentlyMoving = true;
 			if(Main.canMove)
-				Main.spriteChelsey.getCoords().adjustY(-5);
+				Main.spriteChelsey.getCoords().adjustY(-4);
 			else
 				lastBeforeCollision = 'w';
 			break;
@@ -60,7 +61,7 @@ public class KeyProcessor{
 			direction = 1;
 			Main.currentlyMoving = true;
 			if(Main.canMove)
-				Main.spriteChelsey.getCoords().adjustY(5);
+				Main.spriteChelsey.getCoords().adjustY(4);
 			else
 				lastBeforeCollision = 's';
 			break;
@@ -75,6 +76,17 @@ public class KeyProcessor{
 			break; 
 			
 		case '$':
+			if(Main.spriteInteracts.size() - 1 > Main.currentLevel){
+				if(Main.spriteInteracts.get(Main.currentLevel).getCanInteract()){
+					if(swSpaceBar.isTimeUp()){
+						if(Main.currentLevel < Main.interactableObjects.length){
+							Main.dialogueVisible = true;
+							Main.currentLevel += 1;
+							swSpaceBar.resetWatch();
+						}
+					}
+				}
+			}
 			break;
 			
 		case 'm':

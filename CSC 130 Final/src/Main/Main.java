@@ -10,12 +10,13 @@ import logic.Control;
 import timer.stopWatchX;
 import Data.spriteInfo;
 import FileIO.EZFileRead;
+import Data.CollisionBuffer;
+import Data.CollisionArea;
 
 public class Main{
 	// Fields (Static) below...
 	public static Color darkGreen = new Color(0, 100, 50);
 	public static stopWatchX timer = new stopWatchX(68);
-	public static stopWatchX timerDialogue = new stopWatchX(5000);
 	
 	//fields for Chelsey(character)
 	//frames in use, [set of frames][specific frame]
@@ -28,12 +29,14 @@ public class Main{
 	public static int currentSpriteIndex = 0; //current frame we are on
 	public static spriteInfo spriteChelsey = new spriteInfo(new Vector2D(610, 350), framesInUse[KeyProcessor.direction][currentSpriteIndex]);
 	public static boolean currentlyMoving = false;
+	public static CollisionBuffer collisionBufferChelsey= new CollisionBuffer(spriteChelsey, 128, 128);
 	
 	//fields for other sprites
 	public static spriteInfo spriteFloorL = new spriteInfo(new Vector2D(0, 0), "FloorLeft");
 	public static spriteInfo spriteFloorR = new spriteInfo(new Vector2D(640, 0), "FloorRight");
 	
 	public static ArrayList<spriteInfo> spriteObjects = new ArrayList<>();
+	public static ArrayList<CollisionBuffer> spriteBuffers = new ArrayList<>();
 	public static Vector2D[] spriteObjectsVectors = {new Vector2D(0, 0), new Vector2D(640, 0), new Vector2D(0, 0), new Vector2D(1240, 0), new Vector2D(0, 546), new Vector2D(640, 546), new Vector2D(850, 40), new Vector2D(960, 120), new Vector2D(50, 40), new Vector2D(700, 180), new Vector2D(150, 400), new Vector2D(500, 90), new Vector2D(610, 200)};
 	public static String[] spriteObjectsString = {"WallTop1", "WallTop2", "WallLeft", "WallRight", "WallBottom1", "WallBottom2", "GreenScreen", "Cat", "Tables", "Camera", "Crate1", "Crate2", "Chair"};
 	//height and widths of objects in order
@@ -43,9 +46,18 @@ public class Main{
 	public static HashMap<String, String> dialogue = new HashMap<>();
 	public static String[] dialogueKey = new String[5];
 	public static int currentDialogueKey = 0;
+	public static boolean dialogueVisible = false;
+	
+	//fields for interaction
+	public static String interact = "";
+	public static boolean canInteract = false;
+	public static ArrayList<CollisionArea> spriteInteracts = new ArrayList<>();
+	public static int[] interactableObjects = {6, 10, 6, 8, 12}; //uses index from sprite objects string
+	public static int currentLevel = 0;
 	
 	//fields for physics
 	public static boolean canMove = true; //if Chelsey can move in that direction or not
+	
 	// End Static fields...
 	
 	public static void main(String[] args) {
@@ -67,6 +79,16 @@ public class Main{
 			dialogue.put(key, value);
 			dialogueKey[j] = key;
 		}
+		
+		//initiallize spriteInfo, Collision Buffer, interactable objects
+		for(int i = 0; i < spriteObjectsString.length; i++){
+			spriteObjects.add(new spriteInfo(spriteObjectsVectors[i], spriteObjectsString[i]));
+			spriteBuffers.add(new CollisionBuffer(spriteObjects.get(i), widthHeight[i][0], widthHeight[i][1]));
+		}
+		
+		for(int i = 0; i < interactableObjects.length; i++){
+			spriteInteracts.add(new CollisionArea(spriteObjects.get(interactableObjects[i]), widthHeight[interactableObjects[i]][0], widthHeight[interactableObjects[i]][1], 40, 10, dialogue.get(dialogueKey[i]), i));
+		}
 	}
 		
 	
@@ -78,11 +100,19 @@ public class Main{
 		
 		ctrl.addSpriteToFrontBuffer(spriteChelsey.getCoords().getX(), spriteChelsey.getCoords().getY(), framesInUse[KeyProcessor.direction][currentSpriteIndex]);
 		
-		ctrl.drawString(100, 250, dialogue.get(dialogueKey[currentDialogueKey]), Color.WHITE);
+		if(dialogueVisible && (currentLevel < spriteInteracts.size())) {
+			ctrl.drawString(150, 650, spriteInteracts.get(currentLevel).getOnScreenText(), Color.WHITE);
+		}
 
+		ctrl.drawString(525, 520, interact, Color.WHITE);
+		
+		ctrl.drawString(20, 700, "Level " + (currentLevel + 1), Color.WHITE);
+		
 		timerChecks();
 		
-		setCanMove(spriteObjects);
+		setCanMove();
+		
+		setCanInteract();
 	}
 	
 	// Additional Static methods below...(if needed)
@@ -94,58 +124,45 @@ public class Main{
 			timer.resetWatch();
 		}
 
-		while(timerDialogue.isTimeUp()){
-			currentDialogueKey++;
-			if(currentDialogueKey >= dialogueKey.length) currentDialogueKey = 0;
-			timerDialogue.resetWatch();
-		}
 	}
 	
 	//adds other sprites like bg objects
 	private static void addSprites(Control ctrl){
-		//floors and walls
+		//floors
 		ctrl.addSpriteToFrontBuffer(spriteFloorL.getCoords().getX(), spriteFloorL.getCoords().getY(), spriteFloorL.getTag());
 		ctrl.addSpriteToFrontBuffer(spriteFloorR.getCoords().getX(), spriteFloorR.getCoords().getY(), spriteFloorR.getTag());
 		
-		//objects
+		//objects with collision
 		for(int i = 0; i < spriteObjectsString.length; i++){
-			if(spriteObjects.size() < 13){
-				spriteObjects.add(new spriteInfo(spriteObjectsVectors[i], spriteObjectsString[i]));
-			}
 			ctrl.addSpriteToFrontBuffer(spriteObjects.get(i).getCoords().getX(), spriteObjects.get(i).getCoords().getY(), spriteObjects.get(i).getTag());
 		}
 	}
 	
 	//checks if then can move through the object or not, if not, bounces them back depending on last input
-	private static void setCanMove(ArrayList<spriteInfo> object){
-		for(int i = 0; i < object.size(); i++){
-			if((spriteChelsey.getCoords().getX() + 30 < object.get(i).getCoords().getX() + widthHeight[i][0]) &&
-					   (spriteChelsey.getCoords().getX() - 30 + 128 > object.get(i).getCoords().getX()) &&
-					   (spriteChelsey.getCoords().getY() + 90 < object.get(i).getCoords().getY() + widthHeight[i][1]) &&
-					   (spriteChelsey.getCoords().getY() + 110 > object.get(i).getCoords().getY())) {
-						
-						canMove = false;
-						
-						if(KeyProcessor.getLastBeforeCollision() == 'w'){
-							spriteChelsey.getCoords().adjustY(2);
-						}
-						
-						if(KeyProcessor.getLastBeforeCollision() == 'a'){
-							spriteChelsey.getCoords().adjustX(2);
-						}
-						
-						if(KeyProcessor.getLastBeforeCollision() == 's'){
-							spriteChelsey.getCoords().adjustY(-2);
-						}
-						
-						if(KeyProcessor.getLastBeforeCollision() == 'd'){
-							spriteChelsey.getCoords().adjustX(-2);
-						}
-						break;
-						
+	private static void setCanMove(){
+		
+		for(int i = 0; i < spriteBuffers.size(); i++){
+			if(collisionBufferChelsey.collisionDetection(spriteChelsey, spriteBuffers.get(i))){
+				canMove = false;
+				break;
 			} else {
 				canMove = true;
+				
 			}
+		}
+	}
+	
+	private static void setCanInteract(){
+		if(spriteInteracts.size() - 1 > currentLevel){
+			if(spriteInteracts.get(currentLevel).collisionDetection(spriteInteracts.get(currentLevel).getSprite(), collisionBufferChelsey)){
+				interact = "Press SpaceBar to Interact";
+				spriteInteracts.get(currentLevel).setCanInteract(true);
+			} else{
+				interact = "";
+				spriteInteracts.get(currentLevel).setCanInteract(false);
+			}
+		} else {
+			interact = "";
 		}
 	}
 	
