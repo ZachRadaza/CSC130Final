@@ -76,6 +76,7 @@ public class CollisionBuffer{
 		this.y2 = y2 + this.height;
 	}
 	
+	//adjust coordinates for current sprite coordinates after initialization
 	public void adjustCoords(spriteInfo sprite){
 		setX1(sprite.getCoords().getX());
 		setX2(sprite.getCoords().getX());
@@ -83,9 +84,10 @@ public class CollisionBuffer{
 		setY2(sprite.getCoords().getY());
 	}
 	
-	//checks if then can move through the object or not, if not, bounces them back depending on last input
+	//checks if then can move through the object or not, if not, bounces them back depending on last input (sometimes bugs and slides through walls but the only solution i could find)
 	public boolean collisionDetection(spriteInfo sprite, CollisionBuffer object){
 		adjustCoords(sprite);
+		//plus and minus to adjust for gaps in image and a sort of 3D effect
 		if((this.getX1() + 30 < object.getX2()) &&
 		   (this.getX2() - 30 > object.getX1()) &&
 		   (this.getY1() + 90 < object.getY2()) &&

@@ -11,7 +11,7 @@ public class KeyProcessor{
 	private static stopWatchX sw = new stopWatchX(5);
 	private static stopWatchX swSpaceBar = new stopWatchX(2000); //makes sure you can only press space bar space bar once every 2 seconds
 	
-	public static int direction = 1; //direction character is going
+	public static int direction = 1; //direction character is going, tied to animation being done
 	
 	private static char lastBeforeCollision = ' ';
 	// Static Method(s)
@@ -76,11 +76,10 @@ public class KeyProcessor{
 			break; 
 			
 		case '$':
-			if(Main.spriteInteracts.size() - 1 > Main.currentLevel){
-				if(Main.spriteInteracts.get(Main.currentLevel).getCanInteract()){
-					if(swSpaceBar.isTimeUp()){
+			if(Main.spriteInteracts.size() - 1 > Main.currentLevel){ //bounds check
+				if(Main.spriteInteracts.get(Main.currentLevel).getCanInteract() && Main.spriteInteracts.get(Main.currentLevel).getDirections()[direction]){ //can interact and faces teh right direction
+					if(swSpaceBar.isTimeUp()){ //prevents bug due to reset being 5 miliseconds
 						if(Main.currentLevel < Main.interactableObjects.length){
-							Main.dialogueVisible = true;
 							Main.currentLevel += 1;
 							swSpaceBar.resetWatch();
 						}

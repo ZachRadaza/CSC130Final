@@ -1,5 +1,5 @@
 string1*Chelsey: 'I should film my cat'
-string2*Chelsey: 'My lense is scratched, I think I need another one. I should be in the black crate'
+string2*Chelsey: 'My lense is scratched, I think I need another one. It should be in the black crate'
 string3*Chelsey: 'There you go, these lenses are brand new. This should work. Let me try to shoot the cat again'
 string4*Chelsey: 'Stop moving, this is a cool shot. Let me put it in the computer to see if it looks good'
 string5*Chelsey: 'Looks great. So this is what being a director is like.'

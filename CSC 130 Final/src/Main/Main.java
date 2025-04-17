@@ -46,13 +46,14 @@ public class Main{
 	public static HashMap<String, String> dialogue = new HashMap<>();
 	public static String[] dialogueKey = new String[5];
 	public static int currentDialogueKey = 0;
-	public static boolean dialogueVisible = false;
 	
 	//fields for interaction
 	public static String interact = "";
 	public static boolean canInteract = false;
 	public static ArrayList<CollisionArea> spriteInteracts = new ArrayList<>();
 	public static int[] interactableObjects = {6, 10, 6, 8, 12}; //uses index from sprite objects string
+	//for directionality in interaction
+	public static boolean[][] interactableObjectsDirection = {{true, false, false, false},{true, false, false, true},{true, false, false, false},{true, false, false, false},{true, false, false, false}};
 	public static int currentLevel = 0;
 	
 	//fields for physics
@@ -87,7 +88,7 @@ public class Main{
 		}
 		
 		for(int i = 0; i < interactableObjects.length; i++){
-			spriteInteracts.add(new CollisionArea(spriteObjects.get(interactableObjects[i]), widthHeight[interactableObjects[i]][0], widthHeight[interactableObjects[i]][1], 40, 10, dialogue.get(dialogueKey[i]), i));
+			spriteInteracts.add(new CollisionArea(spriteObjects.get(interactableObjects[i]), widthHeight[interactableObjects[i]][0], widthHeight[interactableObjects[i]][1], -20, -70, dialogue.get(dialogueKey[i]), i, interactableObjectsDirection[i][0], interactableObjectsDirection[i][1], interactableObjectsDirection[i][2], interactableObjectsDirection[i][3]));
 		}
 	}
 		
@@ -100,8 +101,8 @@ public class Main{
 		
 		ctrl.addSpriteToFrontBuffer(spriteChelsey.getCoords().getX(), spriteChelsey.getCoords().getY(), framesInUse[KeyProcessor.direction][currentSpriteIndex]);
 		
-		if(dialogueVisible && (currentLevel < spriteInteracts.size())) {
-			ctrl.drawString(150, 650, spriteInteracts.get(currentLevel).getOnScreenText(), Color.WHITE);
+		if(currentLevel < spriteInteracts.size()) {
+			ctrl.drawString(125, 650, spriteInteracts.get(currentLevel).getOnScreenText(), Color.WHITE);
 		}
 
 		ctrl.drawString(525, 520, interact, Color.WHITE);
@@ -152,9 +153,10 @@ public class Main{
 		}
 	}
 	
+	//checks if chelsey can interact with objects
 	private static void setCanInteract(){
 		if(spriteInteracts.size() - 1 > currentLevel){
-			if(spriteInteracts.get(currentLevel).collisionDetection(spriteInteracts.get(currentLevel).getSprite(), collisionBufferChelsey)){
+			if(spriteInteracts.get(currentLevel).collisionDetection(spriteInteracts.get(currentLevel).getSprite(), collisionBufferChelsey) && spriteInteracts.get(currentLevel).getDirections()[KeyProcessor.direction]){
 				interact = "Press SpaceBar to Interact";
 				spriteInteracts.get(currentLevel).setCanInteract(true);
 			} else{
